@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Altany CNC</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e9ecef;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 600;
+    }
+
+    input[type="number"], select, button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .checkbox {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+      border: none;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #result {
+      margin-top: 25px;
+      font-size: 18px;
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .note {
+      font-size: 14px;
+      color: #666;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Kalkulator Altany CNC</h2>
+
+    <label for="x">Szerokość (m):</label>
+    <input type="number" id="x" placeholder="Np. 4">
+
+    <label for="y">Długość (m):</label>
+    <input type="number" id="y" placeholder="Np. 6">
+
+    <label for="roof">Rodzaj dachu:</label>
+    <select id="roof">
+      <option value="0">Jednospadowy (+0 zł)</option>
+      <option value="200">Dwuspadowy (+200 zł)</option>
+      <option value="300">Kopertowy (+300 zł)</option>
+    </select>
+
+    <div class="checkbox">
+      <input type="checkbox" id="gont">
+      <label for="gont">+ Gont do pokrycia altany</label>
+    </div>
+
+    <button onclick="calculate()">Oblicz cenę</button>
+
+    <div id="result">
+    <label for="notes">Dodatkowe uwagi:</label>
+    <textarea id="notes" rows="4" placeholder="Np. kolor, inne preferencje..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; font-size:16px;"></textarea>
+
+    <button onclick="window.print()" style="background-color:#007bff; margin-top:10px;">Drukuj wycenę</button>
+    </div>
+
+    <div class="note">
+
+      <p><strong>Dodatkowe opcje (do ustalenia indywidualnie):</strong></p>
+      <ul>
+        <li>Ozdobne końcówki krokwi</li>
+        <li>Wysokość inna niż standardowa (2.1 m do słupa)</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const x = parseFloat(document.getElementById('x').value);
+      const y = parseFloat(document.getElementById('y').value);
+      const gont = document.getElementById('gont').checked;
+      const roofExtra = parseFloat(document.getElementById('roof').value);
+
+      if (!x || !y) {
+        document.getElementById('result').innerText = 'Uzupełnij wszystkie dane.';
+        return;
+      }
+
+      const baseArea = 4 * 6;
+      const newArea = x * y;
+      const scale = newArea / baseArea;
+
+      const kvh = 0.8 * scale;
+      const sodra = 0.72 * scale;
+      const boazeria = 36 * scale;
+
+      let price = (kvh * 3000) + (sodra * 2700) + (boazeria * 53);
+      if (gont) {
+        price += boazeria * 30;
+      }
+
+      price += roofExtra;
+
+      document.getElementById('result').innerHTML = `
+        Szacunkowa cena altany: <br><span style="font-size:22px;">${price.toFixed(2)} zł</span>
+      `;
+    }
+  </script>
+</body>
+</html>
